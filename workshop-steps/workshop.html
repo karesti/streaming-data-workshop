@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)http://getbootstrap.com/2.3.2/examples/starter-template.html -->
+<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Streaming Data Workshop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Le styles -->
+  <style>
+    body {
+      padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+    }
+  </style>
+  <link href="bootstrap.min.css" rel="stylesheet" />
+
+  <style type="text/css"></style></head>
+
+<body cz-shortcut-listen="true">
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        Streaming Data Workshop
+      </a>
+      <div class="nav-collapse collapse">
+        <ul class="nav">
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <h1>Playground</h1>
+
+  <section id="openshift">
+    <img src="img/openshift.png" alt="Openshift" class="img-rounded" height="30%" width="30%">
+    <ul style="list-style: decimal;">
+      <li>Start a cluster with the service catalog</li>
+      <code>cd streaming-data-workshop</code><br>
+      <code>./start-openshift.sh</code>
+      <li>Log in into <code>https://127.0.0.1:8443</code> with developer/developer</li>
+      <li>Click in "browse catalog"</li>
+    </ul>
+  </section>
+  <section id="infinispan">
+    <img src="img/infinispan9_pixelsizes_600.gif" alt="Infinispan" class="img-rounded" height="20%" width="20%">
+    <ul style="list-style: decimal;">
+      <li>In openshift catalog, choose "Infinispan Ephemeral"</li>
+      <li>Add the following configuration :
+          <pre>APPLICATION_NAME <code>datagrid</code>
+          NUMBER_OF_INSTANCES <code>3</code>
+          MANAGEMENT_USER and MANAGEMENT_PASSWORD <code>developer/developer</code></pre>
+      </li>
+      <li>Click "Next" and "Create"</li>
+      <li>Go to "My project"</li>
+      <li>You should see "datagrid" deployment with 3 pods and 3 services : datagrid-hotrod, datagrid-http and datagrid-management</li>
+    </ul>
+    <div class="alert alert-warning">You can deploy de cluster easily from command line :</div>
+      <pre>
+        > cd streaming-data-workshop
+        > ./start-datagrid.sh</pre>
+  </section>
+  <section id="vert.x">
+    <img src="img/Vert.x_Logo.svg.png" alt="Vert.x" class="img-rounded" height="15%" width="15%">
+    <p>We are going to work in the project now, in the simple-web-application module. The main goal here is to
+      start and deploy your first web application that will put and get a value from infinispan.
+      This quick exercise will help you get into the Vert.x and Infinispan API.
+    </p>
+    <ul style="list-style: decimal;">
+      <li>In the project, simple-web-application module</li>
+      <li>Create your first Verticle</li>
+
+    </ul>
+  </section>
+
+  <h1>Data injection</h1>
+
+  <h2>Datagrid visualizer</h2>
+
+  <h1>Continuous Query</h1>
+
+  <h1>Ikkle Query</h1>
+
+
+
+</div> <!-- /container -->
+<br/><br/>
+
+<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+
+</body></html>
