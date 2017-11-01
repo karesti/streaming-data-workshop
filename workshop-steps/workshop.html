@@ -12,6 +12,12 @@
     body {
       padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
     }
+    section {
+      padding-bottom: 40px;
+    }
+    li {
+      margin: 10px;
+    }
   </style>
   <link href="bootstrap.min.css" rel="stylesheet" />
 
@@ -34,7 +40,7 @@
 </div>
 
 <div class="container">
-  <h1>Playground</h1>
+  <h1>Ex1 :: Playground</h1>
 
   <section id="openshift">
     <img src="img/openshift.png" alt="Openshift" class="img-rounded" height="30%" width="30%">
@@ -42,22 +48,27 @@
       <li>Start a cluster with the service catalog</li>
       <code>cd streaming-data-workshop</code><br>
       <code>./start-openshift.sh</code>
-      <li>Log in into <code>https://127.0.0.1:8443</code> with developer/developer</li>
+      <li>Log in into <code>https://127.0.0.1:8443</code> with <code>developer/developer</code></li>
       <li>Click in "browse catalog"</li>
     </ul>
+    <img src="img/openshift-catalog.png" alt="simple web app" class="img-rounded"/>
   </section>
+
   <section id="infinispan">
     <img src="img/infinispan9_pixelsizes_600.gif" alt="Infinispan" class="img-rounded" height="20%" width="20%">
     <ul style="list-style: decimal;">
-      <li>In openshift catalog, choose "Infinispan Ephemeral"</li>
+      <li>In openshift catalog, choose <kbd>Infinispan Ephemeral</kbd></li>
       <li>Add the following configuration :
-          <pre>APPLICATION_NAME <code>datagrid</code>
-          NUMBER_OF_INSTANCES <code>3</code>
-          MANAGEMENT_USER and MANAGEMENT_PASSWORD <code>developer/developer</code></pre>
+          <pre>
+            APPLICATION_NAME=datagrid
+            NUMBER_OF_INSTANCES=3
+            MANAGEMENT_USER/MANAGEMENT_PASSWORD=developer/developer</pre>
       </li>
-      <li>Click "Next" and "Create"</li>
-      <li>Go to "My project"</li>
-      <li>You should see "datagrid" deployment with 3 pods and 3 services : datagrid-hotrod, datagrid-http and datagrid-management</li>
+      <li>Click <kbd>Next</kbd></li>
+      <li>Click <kbd>Create</kbd></li>
+      <li>Go to <kbd>My project</kbd></li>
+      <li>You should see <kbd>datagrid</kbd> deployment with <kbd>3 pods</kbd> and <kbd>3 services</kbd> : datagrid-hotrod, datagrid-http and datagrid-management</li>
+      <img src="img/datagrid-pods.png" alt="pods" class="img-rounded"/>
     </ul>
     <div class="alert alert-warning">You can deploy de cluster easily from command line :</div>
       <pre>
@@ -74,6 +85,9 @@
       <li>In the project, simple-web-application module</li>
       <li>Create your first Verticle</li>
 
+
+      <li>Deploy with <code>./deploy.sh</code> and redeploy with <code>./redeploy.sh</code></li>
+      <img src="img/simple-web-app.png" alt="simple web app" class="img-rounded"/>
     </ul>
   </section>
 
