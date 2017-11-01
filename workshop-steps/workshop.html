@@ -15,7 +15,7 @@
       padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
     }
     section {
-      padding-bottom: 40px;
+      padding-bottom: 20px;
     }
     li {
       margin: 10px;
@@ -171,13 +171,12 @@ public class PlayWithTheCache extends AbstractVerticle {
 
   <h2>Ex3 :: Start</h2>
   <ul>
-    <li>
-      <p> Run <code>./start-all.sh</code></p>
-      <div class="alert alert-info">This will start Openshift, Deploy the Datagrid and Deploy all the components involved in the workshop</div>
-    </li>
+    <li>Run <code>./start-openshift.sh</code>. Reboot docker engine if you see an error related to service catalog.</li>
+    <li>Log in into <a href="https://127.0.0.1:8443" target="_blank">Openshift console</a> with <code>developer/developer</code></li>       <p> Run <code>./start-datagrid.sh</code></p></li>
+    <li>Run <code>./start-datagrid.sh</code>. Check your 3 pods are active</li>
+    <li>Run <code>./deploy-all.sh</code></li>
     <li>Go to the board : <a href="http://localhost:3000/" target="_target">front-end app</a></li>
   </ul>
-
 
   <h2>Ex4 :: Collect data</h2>
 
@@ -194,12 +193,64 @@ public class PlayWithTheCache extends AbstractVerticle {
     </ul>
   </section>
 
-  <h3>Make injection work</h3>
+  <h3>Make data injection work</h3>
 
   <section id="inject">
     <img src="img/collectionLayer.png" alt="Collection Layer" class="img-rounded">
     <ul style="list-style: decimal;">
       <li>Open <kbd>StationsInjector</kbd></li>
+      <li>Implement <code>inject</code> method with JavaRX
+        <pre><code class="java">router.get(STATIONS_INJECTOR_URI).handler(this::inject);
+
+private void inject(RoutingContext ctx) {
+    vertx. < RemoteCache < String, Stop>>rxExecuteBlocking(fut -> fut.complete(client.getCache(STATION_BOARDS_CACHE_NAME)))
+      // Remove data on start, to start clean
+      .map(stations -> fromFuture(stations.clearAsync()).to(x -> stations))
+      .subscribe(stations -> {
+        vertx.setPeriodic(5000L, l ->
+          vertx.executeBlocking(fut -> {
+            log.info(String.format("Progress: stored=%d%n", stations.size()));
+            fut.complete();
+          }, false, ar -> {}));
+
+        // TODO 1: Get an observable for "cff-stop-2016-02-29__.jsonl.gz" file calling the method rxReadGunzippedTextResource
+        // TODO 2: map each entry into a tuple of String/Stop with StationsInjector::toEntry
+        // TODO 3. flatMap each entry to stored it in the stations cache calling putAsync and using Observable.from
+        // TODO 4. subscribe Actions.empty() and log an error happened
+
+        ctx.response().end("Injector started");
+      });
+  }
+        </code></pre>
+
+        <a class="btn btn-info" role="button" onclick="$('#array-sol-3').toggle();">Show/Hide Solution</a>
+        <div id="array-sol-3" style="display:none;">
+        <pre>
+          <code class="java">private void inject(RoutingContext ctx) {
+    vertx.< RemoteCache < String , Stop > >rxExecuteBlocking(fut -> fut.complete(client.getCache(STATION_BOARDS_CACHE_NAME)))
+      // Remove data on start, to start clean
+      .map(stations -> fromFuture(stations.clearAsync()).to(x -> stations))
+      .subscribe(stations -> {
+        vertx.setPeriodic(5000L, l ->
+          vertx.executeBlocking(fut -> {
+            log.info(String.format("Progress: stored=%d%n", stations.size()));
+            fut.complete();
+          }, false, ar -> {}));
+
+        rxReadGunzippedTextResource("cff-stop-2016-02-29__.jsonl.gz")
+          .map(StationsInjector::toEntry)
+          .flatMap(e -> Observable.from(stations.putAsync(e.getKey(), e.getValue())))
+          .subscribe(Actions.empty(),
+            t -> log.log(SEVERE, "Error while loading", t));
+
+        ctx.response().end("Injector started");
+      });
+}</code></pre>
+        </div>
+      </li>
+      <li><code>./redeploy.sh</code></li>
+      <li>HOW TO LAUNCH THE INJECTORS???</li>
+      <li>Go to <a href="http://datagrid-visualizer-myproject.127.0.0.1.nip.io/infinispan-visualizer/" target="_target"> and see data being loaded</a></li>
     </ul>
   </section>
 
@@ -224,15 +275,6 @@ public class PlayWithTheCache extends AbstractVerticle {
       <li>Open <kbd>DelayedTrains</kbd></li>
     </ul>
   </section>
-
-  <h2>Ex7 :: Delayed trains Dashboard</h2>
-
-  <section id="dashboard">
-    <ul style="list-style: decimal;">
-      <li>Open <kbd>DelayedDashboard</kbd></li>
-    </ul>
-  </section>
-
 
 </div> <!-- /container -->
 <br/><br/>
