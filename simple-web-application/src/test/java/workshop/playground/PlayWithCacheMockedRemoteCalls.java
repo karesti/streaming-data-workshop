@@ -9,7 +9,6 @@ import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 
 import io.vertx.core.Vertx;
-import workshop.playgroud.PlayWithTheCache;
 
 public class PlayWithCacheMockedRemoteCalls extends PlayWithTheCache {
 

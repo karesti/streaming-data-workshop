@@ -8,7 +8,9 @@
   <meta name="author" content="">
 
   <!-- Le styles -->
-  <style>
+  <link href="bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/idea.css">
+  <style type="text/css">
     body {
       padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
     }
@@ -18,10 +20,13 @@
     li {
       margin: 10px;
     }
+    pre {
+      background-color: white;
+    }
   </style>
-  <link href="bootstrap.min.css" rel="stylesheet" />
-
-  <style type="text/css"></style></head>
+  <script src="highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</head>
 
 <body cz-shortcut-listen="true">
 
@@ -46,9 +51,9 @@
     <img src="img/openshift.png" alt="Openshift" class="img-rounded" height="30%" width="30%">
     <ul style="list-style: decimal;">
       <li>Start a cluster with the service catalog</li>
-      <code>cd streaming-data-workshop</code><br>
-      <code>./start-openshift.sh</code>
-      <li>Log in into <code>https://127.0.0.1:8443</code> with <code>developer/developer</code></li>
+      <pre><code>> cd streaming-data-workshop
+> ./start-openshift.sh</code></pre>
+      <li>Log in into <a href="https://127.0.0.1:8443" target="_blank">Openshift console</a> with <code>developer/developer</code></li>
       <li>Click in "browse catalog"</li>
     </ul>
     <img src="img/openshift-catalog.png" alt="simple web app" class="img-rounded"/>
@@ -59,10 +64,9 @@
     <ul style="list-style: decimal;">
       <li>In openshift catalog, choose <kbd>Infinispan Ephemeral</kbd></li>
       <li>Add the following configuration :
-          <pre>
-            APPLICATION_NAME=datagrid
-            NUMBER_OF_INSTANCES=3
-            MANAGEMENT_USER/MANAGEMENT_PASSWORD=developer/developer</pre>
+          <pre><code>APPLICATION_NAME=datagrid
+NUMBER_OF_INSTANCES=3
+MANAGEMENT_USER/MANAGEMENT_PASSWORD=developer/developer</code></pre>
       </li>
       <li>Click <kbd>Next</kbd></li>
       <li>Click <kbd>Create</kbd></li>
@@ -71,9 +75,8 @@
       <img src="img/datagrid-pods.png" alt="pods" class="img-rounded"/>
     </ul>
     <div class="alert alert-warning">You can deploy de cluster easily from command line :</div>
-      <pre>
-        > cd streaming-data-workshop
-        > ./start-datagrid.sh</pre>
+      <pre><code>cd streaming-data-workshop
+./start-datagrid.sh</code></pre>
   </section>
   <section id="vert.x">
     <img src="img/Vert.x_Logo.svg.png" alt="Vert.x" class="img-rounded" height="15%" width="15%">
@@ -82,12 +85,82 @@
       This quick exercise will help you get into the Vert.x and Infinispan API.
     </p>
     <ul style="list-style: decimal;">
-      <li>In the project, simple-web-application module</li>
-      <li>Create your first Verticle</li>
+      <li>In the project, open <kbd>simple-web-application module</kbd></li>
+      <li>Create your first Verticle.
+        <ul>
+          <li>Extend the class from <code>AbstractVerticle</code></li>
+          <li>Override <code>start</code> method</li>
+          <li>Create a Router with <code>Router router = Router.router(vertx);</code></li>
+          <li>Create an empty <kbd>GET</kbd> endpoint that will respond <code>Welcome</code> from the Router</li>
+          <li>Create a <kbd>GET</kbd> endpoint in <code>/api</code> that responds
+            <pre><code class="json">{"name":"duchess","version":1}</code></pre>
+            using <pre><code class="java">new JsonObject().put("name", "duchess").put("version", 1).encode()</code></pre>
+          </li>
+          <li>Create a <code>HttpServer</code> with vertx object with requestHandler <code>router::accept</code> and listening to port <code>8080</code></li>
+        </ul>
+        <br/>
+        <a class="btn btn-info" role="button" onclick="$('#array-sol-1').toggle();">Show/Hide Solution</a>
+        <div id="array-sol-1" style="display:none;">
+        <pre>
+          <code class="java">package workshop.playgroud;
 
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Future;
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.Router;
 
-      <li>Deploy with <code>./deploy.sh</code> and redeploy with <code>./redeploy.sh</code></li>
+public class PlayWithTheCache extends AbstractVerticle {
+
+  @Override
+  public void start() throws Exception {
+    Router router = Router.router(vertx);
+
+    router.get("/").handler(rc -> {
+      rc.response().end("Welcome");
+    });
+
+    router.get("/api").handler(rc -> {
+      rc.response().end(new JsonObject().put("name", "duchess").put("version", 1).encode());
+    });
+
+    vertx.createHttpServer()
+      .requestHandler(router::accept)
+      .listen(8080);
+  }
+}</code>
+        </pre>
+      </div>
+      </li>
+      <li>Deploy with <code>./deploy.sh</code></li>
       <img src="img/simple-web-app.png" alt="simple web app" class="img-rounded"/>
+      <li>Go to <a target="_target" href="http://simple-web-app-myproject.127.0.0.1.nip.io">Welcome endpoint</a></li>
+      <li>Go to <a target="_target" href="http://simple-web-app-myproject.127.0.0.1.nip.io/api">Api endpoint</a></li>
+      <li> Connect with Infinispan Cluster
+        <ul>
+          <li>Init the <code>RemoteCacheManager</code> with <pre><code class="java">new ConfigurationBuilder().addServer()
+          .host(DATAGRID_HOST) // contains the value datagrid-hotrod that is a service in Openshfitt
+          .port(DATAGRID_PORT) // contains the hotrod point 11222
+          .build())</code></pre></li>
+          <li>Init the <code>defaultCache</code> calling <code>remoteCacheManager.getCache()</code></li>
+          <li>Add the <kbd>POST</kbd> <code>router.post("/api/duchess").handler(this::handleAddDuchess);</code></li>
+          <li>Implement <code>handleAddDuchess</code> so that it takes the <code>id</code> and the <code>value</code> in the body
+            using <code>rc.getBodyAsJson()</code> and <code>defaultCache.putAsync(k,v)</code></li>
+          <li>Add the <kbd>GET</kbd> <code>router.get("/api/duchess/:id").handler(this::handleGetDuchess);</code></li>
+          <li>Implement <code>handleGetDuchess</code> so that it takes the <code>id</code> using <code>rc.request().getParam</code> and <code>defaultCache.getAsync(k)</code></li>
+        </ul>
+      <br/>
+        <a class="btn btn-info" role="button" onclick="$('#array-sol-2').toggle();">Show/Hide Solution</a>
+        <div id="array-sol-2" style="display:none;">
+        <pre>
+          <code class="java"> SOLUTION HERE
+</code>
+        </pre>
+        </div>
+      </li>
+      <li>Redeploy with <code>./redeploy.sh</code></li>
+      <li>Test <kbd>POST</kbd> with <code>curl ...</code></li>
+      <li>Test <kbd>GET</kbd> with <code>curl ...</code></li>
     </ul>
   </section>
 
