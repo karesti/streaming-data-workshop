@@ -8,7 +8,7 @@
   <meta name="author" content="">
 
   <!-- Le styles -->
-  <link href="bootstrap.min.css" rel="stylesheet" />
+  <link href="styles/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="styles/idea.css">
   <style type="text/css">
     body {
@@ -24,7 +24,7 @@
       background-color: white;
     }
   </style>
-  <script src="highlight.pack.js"></script>
+  <script src="js/highlight.pack.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
 </head>
 
@@ -47,6 +47,10 @@
 <div class="container">
   <h1>Ex1 :: Playground</h1>
 
+  <p>We will start with a warmup for those that are not familiar with Vert.x Infinispan and Openshift.
+  If you ave already played or worked with these frameworks before, you can skip this part.</p>
+
+  <h2>Start Openshift and Create an Infinispan Cluster</h2>
   <section id="openshift">
     <img src="img/openshift.png" alt="Openshift" class="img-rounded" height="30%" width="30%">
     <ul style="list-style: decimal;">
@@ -78,12 +82,11 @@ MANAGEMENT_USER/MANAGEMENT_PASSWORD=developer/developer</code></pre>
       <pre><code>cd streaming-data-workshop
 ./start-datagrid.sh</code></pre>
   </section>
+
+  <h2>Vert.x and Infinispan Intro</h2>
+  <p>In this section you will learn how to create REST endpoints using vert.x and how to comunicate remotely with a cache.</p>
   <section id="vert.x">
     <img src="img/Vert.x_Logo.svg.png" alt="Vert.x" class="img-rounded" height="15%" width="15%">
-    <p>We are going to work in the project now, in the simple-web-application module. The main goal here is to
-      start and deploy your first web application that will put and get a value from infinispan.
-      This quick exercise will help you get into the Vert.x and Infinispan API.
-    </p>
     <ul style="list-style: decimal;">
       <li>In the project, open <kbd>simple-web-application module</kbd></li>
       <li>Create your first Verticle.
@@ -136,7 +139,7 @@ public class PlayWithTheCache extends AbstractVerticle {
       <img src="img/simple-web-app.png" alt="simple web app" class="img-rounded"/>
       <li>Go to <a target="_target" href="http://simple-web-app-myproject.127.0.0.1.nip.io">Welcome endpoint</a></li>
       <li>Go to <a target="_target" href="http://simple-web-app-myproject.127.0.0.1.nip.io/api">Api endpoint</a></li>
-      <li> Connect with Infinispan Cluster
+      <li> Connect with Infinispan 
         <ul>
           <li>Init the <code>RemoteCacheManager</code> with <pre><code class="java">new ConfigurationBuilder().addServer()
           .host(DATAGRID_HOST) // contains the value datagrid-hotrod that is a service in Openshfitt
@@ -160,23 +163,23 @@ public class PlayWithTheCache extends AbstractVerticle {
       </li>
       <li>Redeploy with <code>./redeploy.sh</code></li>
       <li>Test <kbd>POST</kbd> with <code>curl ...</code></li>
-      <li>Test <kbd>GET</kbd> with <code>curl ...</code></li>
+      <li>Test <kbd>GET</kbd> with <code>curl -X GET -i -H "Accept: application/json" http://simple-web-app-myproject.127.0.0.1.nip.io/api/duchess/1</code></li>
     </ul>
   </section>
 
-  <h1>Data injection</h1>
+  <h1>Ex2 :: Collect data</h1>
 
-  <h2>Datagrid visualizer</h2>
+  <h2>Deploy Datagrid visualizer</h2>
 
-  <h1>Continuous Query</h1>
+  <h1>Ex3: Continuous Query</h1>
 
-  <h1>Ikkle Query</h1>
+  <h1>Ex4: Ikkle Query</h1>
 
 
 
 </div> <!-- /container -->
 <br/><br/>
 
-<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
 
 </body></html>
