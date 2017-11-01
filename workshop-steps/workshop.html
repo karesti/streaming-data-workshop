@@ -45,12 +45,12 @@
 </div>
 
 <div class="container">
-  <h1>Ex1 :: Playground</h1>
+  <h1>Playground</h1>
 
-  <p>We will start with a warmup for those that are not familiar with Vert.x Infinispan and Openshift.
-  If you ave already played or worked with these frameworks before, you can skip this part.</p>
+  <p>We will start with a warmup for those that are not familiar with <strong>Vert.x</strong>, <strong>Infinispan</strong> and <strong>Openshift</strong>.</p>
+  <p>If you ave already played or worked with these frameworks before, you can skip this part.</p>
 
-  <h2>Start Openshift and Create an Infinispan Cluster</h2>
+  <h2>Ex1 :: Start Openshift and Create an Infinispan Cluster</h2>
   <section id="openshift">
     <img src="img/openshift.png" alt="Openshift" class="img-rounded" height="30%" width="30%">
     <ul style="list-style: decimal;">
@@ -83,7 +83,7 @@ MANAGEMENT_USER/MANAGEMENT_PASSWORD=developer/developer</code></pre>
 ./start-datagrid.sh</code></pre>
   </section>
 
-  <h2>Vert.x and Infinispan Intro</h2>
+  <h2>Ex2 :: Vert.x and Infinispan Intro</h2>
   <p>In this section you will learn how to create REST endpoints using vert.x and how to comunicate remotely with a cache.</p>
   <section id="vert.x">
     <img src="img/Vert.x_Logo.svg.png" alt="Vert.x" class="img-rounded" height="15%" width="15%">
@@ -167,14 +167,25 @@ public class PlayWithTheCache extends AbstractVerticle {
     </ul>
   </section>
 
-  <h1>Ex2 :: Collect data</h1>
+  <h1>Streaming Data</h1>
+
+  <h2>Ex3 :: Start</h2>
+  <ul>
+    <li>
+      <p> Run <code>./start-all.sh</code></p>
+      <div class="alert alert-info">This will start Openshift, Deploy the Datagrid and Deploy all the components involved in the workshop</div>
+    </li>
+    <li>Go to the board : <a href="http://localhost:3000/" target="_target">front-end app</a></li>
+  </ul>
+
+
+  <h2>Ex4 :: Collect data</h2>
 
   <p>In this section we are going to import in a reactive and real-time way a file that contains data.
   This code would work connecting to a remote web-service or any other data source. The data collected in the files are real data coming from
   an real API on Swiss Transport.</p>
 
-  <h2>Deploy Datagrid visualizer</h2>
-
+  <h3>Deploy Infinispan Visualizer</h3>
   <section id="visualizer">
     <ul>
       <li><code>cd datagrid-visualizer</code>/li>
@@ -183,7 +194,7 @@ public class PlayWithTheCache extends AbstractVerticle {
     </ul>
   </section>
 
-  <h2>Inject the data</h2>
+  <h3>Make injection work</h3>
 
   <section id="inject">
     <img src="img/collectionLayer.png" alt="Collection Layer" class="img-rounded">
@@ -193,8 +204,7 @@ public class PlayWithTheCache extends AbstractVerticle {
   </section>
 
 
-
-  <h1>Ex3 :: Transport data</h1>
+  <h2>Ex5 :: Transport data</h2>
 
   <p>Delayed Trains Listener</p>
 
@@ -206,7 +216,7 @@ public class PlayWithTheCache extends AbstractVerticle {
   </section>
 
 
-  <h1>Ex4 :: Delayed trains positions</h1>
+  <h2>Ex6 :: Delayed trains positions</h2>
 
   <section id="inmemory">
     <img src="img/InMemoryLayer.png" alt="Inmemory Layer" class="img-rounded">
@@ -215,7 +225,7 @@ public class PlayWithTheCache extends AbstractVerticle {
     </ul>
   </section>
 
-  <h1>Ex5 :: Delayed trains Dashboard</h1>
+  <h2>Ex7 :: Delayed trains Dashboard</h2>
 
   <section id="dashboard">
     <ul style="list-style: decimal;">
