@@ -173,33 +173,55 @@ public class PlayWithTheCache extends AbstractVerticle {
   This code would work connecting to a remote web-service or any other data source. The data collected in the files are real data coming from
   an real API on Swiss Transport.</p>
 
+  <h2>Deploy Datagrid visualizer</h2>
+
+  <section id="visualizer">
+    <ul>
+      <li><code>cd datagrid-visualizer</code>/li>
+      <li><code>./deploy.sh</code></li>
+      <li>Go to <a href="http://datagrid-visualizer-myproject.127.0.0.1.nip.io/infinispan-visualizer/" target="_target">See the visualizer runnnig</a></li>
+    </ul>
+  </section>
+
+  <h2>Inject the data</h2>
+
   <section id="inject">
     <img src="img/collectionLayer.png" alt="Collection Layer" class="img-rounded">
     <ul style="list-style: decimal;">
       <li>Open <kbd>StationsInjector</kbd></li>
-      <li>Add the following configuration :
-        <pre><code>APPLICATION_NAME=datagrid
-NUMBER_OF_INSTANCES=3
-MANAGEMENT_USER/MANAGEMENT_PASSWORD=developer/developer</code></pre>
-      </li>
-      <li>Click <kbd>Next</kbd></li>
-      <li>Click <kbd>Create</kbd></li>
-      <li>Go to <kbd>My project</kbd></li>
-      <li>You should see <kbd>datagrid</kbd> deployment with <kbd>3 pods</kbd> and <kbd>3 services</kbd> : datagrid-hotrod, datagrid-http and datagrid-management</li>
-      <img src="img/datagrid-pods.png" alt="pods" class="img-rounded"/>
     </ul>
-    <div class="alert alert-warning">You can deploy de cluster easily from command line :</div>
-    <pre><code>cd streaming-data-workshop
-./start-datagrid.sh</code></pre>
   </section>
 
 
-  <h2>Deploy Datagrid visualizer</h2>
 
-  <h1>Ex3: Continuous Query</h1>
+  <h1>Ex3 :: Transport data</h1>
 
-  <h1>Ex4: Ikkle Query</h1>
+  <p>Delayed Trains Listener</p>
 
+  <section id="transport">
+    <img src="img/transportLayer.png" alt="Transport Layer" class="img-rounded">
+    <ul style="list-style: decimal;">
+      <li>Open <kbd>DelayedListener</kbd></li>
+    </ul>
+  </section>
+
+
+  <h1>Ex4 :: Delayed trains positions</h1>
+
+  <section id="inmemory">
+    <img src="img/InMemoryLayer.png" alt="Inmemory Layer" class="img-rounded">
+    <ul style="list-style: decimal;">
+      <li>Open <kbd>DelayedTrains</kbd></li>
+    </ul>
+  </section>
+
+  <h1>Ex5 :: Delayed trains Dashboard</h1>
+
+  <section id="dashboard">
+    <ul style="list-style: decimal;">
+      <li>Open <kbd>DelayedDashboard</kbd></li>
+    </ul>
+  </section>
 
 
 </div> <!-- /container -->
