@@ -5,90 +5,55 @@ import static workshop.shared.Constants.DATAGRID_PORT;
 
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
+import org.infinispan.client.hotrod.configuration.Configuration;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
 
-public class PlayWithTheCache extends AbstractVerticle {
+// TODO 1: Extends AbstractVerticle
+public class PlayWithTheCache {
 
   protected RemoteCacheManager client;
   protected RemoteCache<Integer, String> defaultCache;
 
-  @Override
-  public void init(Vertx vertx, Context context) {
-    super.init(vertx, context);
-    initCache(vertx);
-  }
+  // TODO 2: Override 'start' method
+  // TODO 3: create 'Router router = Router.router(vertx);' in the start method
+  // TODO 4: Create an empty GET endpoint that will respond Welcome from the Router
+  // TODO 5: Create a GET endpoint in /api that responds {"name":"duchess","version":1}
+  // TODO 6: Create a HttpServer with vertx object with requestHandler router::accept and listening to port 8080
 
-  @Override
-  public void start() throws Exception {
-    Router router = Router.router(vertx);
+  // TODO 8: Add a body handler to the route router.route().handler(BodyHandler.create());
+  // TODO 9: Add the POST router.post("/api/duchess").handler(this::handleAddDuchess);
 
-    router.get("/").handler(rc -> {
-      rc.response().end("Welcome");
-    });
+  // TODO 11: Add the GET router.get("/api/duchess/:id").handler(this::handleGetDuchess);
 
-    router.get("/api").handler(rc -> {
-      rc.response().end(new JsonObject().put("name", "duchess").put("version", 1).encode());
-    });
-
-    router.post("/api/duchess").handler(this::handleAddDuchess);
-    router.get("/api/duchess/:id").handler(this::handleGetDuchess);
-
-
-    vertx.createHttpServer()
-      .requestHandler(router::accept)
-      .listen(8080);
+  private void handleAddDuchess(RoutingContext rc) {
+    // TODO 10: Implement handleAddDuchess so that it takes the id and the value in the body using rc.getBodyAsJson() and defaultCache.putAsync(k,v)
   }
 
   private void handleGetDuchess(RoutingContext rc) {
-    defaultCache.getAsync(Integer.parseInt(rc.request().getParam("id")))
-      .thenAccept(value -> {
-        String response = "Not found";
-        if (value != null) {
-          response = new JsonObject().put("Duchess", value).encode();
-        }
-        rc.response().end(response);
-      });
-  }
-
-  private void handleAddDuchess(RoutingContext rc) {
-    HttpServerResponse response = rc.response();
-    JsonObject bodyAsJson = rc.getBodyAsJson();
-    if (bodyAsJson != null && bodyAsJson.containsKey("id") && bodyAsJson.containsKey("name")) {
-      defaultCache.putAsync(bodyAsJson.getInteger("id"), bodyAsJson.getString("name"))
-        .thenAccept(s -> {
-          response.end("Duchess Added");
-        });
-    } else {
-      response.end("Body is " + bodyAsJson + ". id and name should be provided");
-    }
-  }
-
-
-  @Override
-  public void stop(Future<Void> stopFuture) throws Exception {
-    if (client != null) {
-      client.stopAsync().whenComplete((e, ex) -> stopFuture.complete());
-    }
+    // TODO 12: Implement handleGetDuchess so that it takes the id using rc.request().getParam and defaultCache.getAsync(k)
   }
 
   protected void initCache(Vertx vertx) {
     vertx.executeBlocking(fut -> {
-      client = new RemoteCacheManager(
-        new ConfigurationBuilder().addServer()
-          .host(DATAGRID_HOST)
-          .port(DATAGRID_PORT)
-          .build());
 
-      defaultCache = client.getCache();
+      Configuration config = new ConfigurationBuilder().addServer()
+        .host(DATAGRID_HOST) // contains the value datagrid-hotrod that is a service in Openshfitt
+        .port(DATAGRID_PORT) // contains the hotrod point 11222
+        .build();
+
+      client = null; // TODO 7: Init the RemoteCacheManager with the config
+
+      defaultCache = null;// TODO 8: Init the defaultCache calling remoteCacheManager.getCache();
+
       fut.complete();
     }, res -> {
       if (res.succeeded()) {

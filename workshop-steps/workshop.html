@@ -146,6 +146,7 @@ public class PlayWithTheCache extends AbstractVerticle {
           .port(DATAGRID_PORT) // contains the hotrod point 11222
           .build())</code></pre></li>
           <li>Init the <code>defaultCache</code> calling <code>remoteCacheManager.getCache()</code></li>
+          <li>Add a body handler to the route <code>router.route().handler(BodyHandler.create());</code></li>
           <li>Add the <kbd>POST</kbd> <code>router.post("/api/duchess").handler(this::handleAddDuchess);</code></li>
           <li>Implement <code>handleAddDuchess</code> so that it takes the <code>id</code> and the <code>value</code> in the body
             using <code>rc.getBodyAsJson()</code> and <code>defaultCache.putAsync(k,v)</code></li>
@@ -156,13 +157,57 @@ public class PlayWithTheCache extends AbstractVerticle {
         <a class="btn btn-info" role="button" onclick="$('#array-sol-2').toggle();">Show/Hide Solution</a>
         <div id="array-sol-2" style="display:none;">
         <pre>
-          <code class="java"> SOLUTION HERE
-</code>
-        </pre>
+          <code class="java">// Add the BodyHandler
+  router.route().handler(BodyHandler.create());
+  router.post("/api/duchess").handler(this::handleAddDuchess);
+  router.get("/api/duchess/:id").handler(this::handleGetDuchess);
+
+  protected void initCache(Vertx vertx) {
+    vertx.executeBlocking(fut -> {
+      client = new RemoteCacheManager(
+        new ConfigurationBuilder().addServer()
+          .host(DATAGRID_HOST)
+          .port(DATAGRID_PORT)
+          .build());
+
+      defaultCache = client.getCache();
+      fut.complete();
+    }, res -> {
+      if (res.succeeded()) {
+        System.out.println("Cache started");
+      } else {
+        res.cause().printStackTrace();
+      }
+    });
+  }
+
+  private void handleGetDuchess(RoutingContext rc) {
+    defaultCache.getAsync(Integer.parseInt(rc.request().getParam("id")))
+      .thenAccept(value -> {
+        String response = "Not found";
+        if (value != null) {
+          response = new JsonObject().put("Duchess", value).encode();
+        }
+        rc.response().end(response);
+      });
+  }
+
+  private void handleAddDuchess(RoutingContext rc) {
+    HttpServerResponse response = rc.response();
+    JsonObject bodyAsJson = rc.getBodyAsJson();
+    if (bodyAsJson != null && bodyAsJson.containsKey("id") && bodyAsJson.containsKey("name")) {
+      defaultCache.putAsync(bodyAsJson.getInteger("id"), bodyAsJson.getString("name"))
+        .thenAccept(s -> {
+          response.end("Duchess Added");
+        });
+    } else {
+      response.end("Body is " + bodyAsJson + ". id and name should be provided");
+    }
+  }</code></pre>
         </div>
       </li>
       <li>Redeploy with <code>./redeploy.sh</code></li>
-      <li>Test <kbd>POST</kbd> with <code>curl ...</code></li>
+      <li>Test <kbd>POST</kbd> with <code>curl -H "Content-Type: application/json" -X POST -d '{"id":1,"name":"Oihana"}' http://simple-web-app-myproject.127.0.0.1.nip.io/api/duchess</code></li>
       <li>Test <kbd>GET</kbd> with <code>curl -X GET -i -H "Accept: application/json" http://simple-web-app-myproject.127.0.0.1.nip.io/api/duchess/1</code></li>
     </ul>
   </section>

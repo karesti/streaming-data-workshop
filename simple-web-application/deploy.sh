@@ -2,6 +2,11 @@
 
 set -e -x
 
+if [[ $1 = "--solution" ]]; then
+  MVN_PROFILE="-P solution"
+  APP_LABEL=",solution=true"
+fi
+
 APP=simple-web-app
 
 oc project myproject

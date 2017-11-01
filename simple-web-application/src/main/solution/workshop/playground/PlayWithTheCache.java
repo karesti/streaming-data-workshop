@@ -8,13 +8,13 @@ import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
 
 public class PlayWithTheCache extends AbstractVerticle {
 
@@ -22,13 +22,8 @@ public class PlayWithTheCache extends AbstractVerticle {
   protected RemoteCache<Integer, String> defaultCache;
 
   @Override
-  public void init(Vertx vertx, Context context) {
-    super.init(vertx, context);
-    initCache(vertx);
-  }
-
-  @Override
   public void start() throws Exception {
+    initCache(vertx);
     Router router = Router.router(vertx);
 
     router.get("/").handler(rc -> {
@@ -39,6 +34,7 @@ public class PlayWithTheCache extends AbstractVerticle {
       rc.response().end(new JsonObject().put("name", "duchess").put("version", 1).encode());
     });
 
+    router.route().handler(BodyHandler.create());
     router.post("/api/duchess").handler(this::handleAddDuchess);
     router.get("/api/duchess/:id").handler(this::handleGetDuchess);
 
