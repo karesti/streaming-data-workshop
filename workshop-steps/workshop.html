@@ -139,7 +139,7 @@ public class PlayWithTheCache extends AbstractVerticle {
       <img src="img/simple-web-app.png" alt="simple web app" class="img-rounded"/>
       <li>Go to <a target="_target" href="http://simple-web-app-myproject.127.0.0.1.nip.io">Welcome endpoint</a></li>
       <li>Go to <a target="_target" href="http://simple-web-app-myproject.127.0.0.1.nip.io/api">Api endpoint</a></li>
-      <li> Connect with Infinispan 
+      <li> Connect with Infinispan
         <ul>
           <li>Init the <code>RemoteCacheManager</code> with <pre><code class="java">new ConfigurationBuilder().addServer()
           .host(DATAGRID_HOST) // contains the value datagrid-hotrod that is a service in Openshfitt
@@ -168,6 +168,31 @@ public class PlayWithTheCache extends AbstractVerticle {
   </section>
 
   <h1>Ex2 :: Collect data</h1>
+
+  <p>In this section we are going to import in a reactive and real-time way a file that contains data.
+  This code would work connecting to a remote web-service or any other data source. The data collected in the files are real data coming from
+  an real API on Swiss Transport.</p>
+
+  <section id="inject">
+    <img src="img/collectionLayer.png" alt="Collection Layer" class="img-rounded">
+    <ul style="list-style: decimal;">
+      <li>Open <kbd>StationsInjector</kbd></li>
+      <li>Add the following configuration :
+        <pre><code>APPLICATION_NAME=datagrid
+NUMBER_OF_INSTANCES=3
+MANAGEMENT_USER/MANAGEMENT_PASSWORD=developer/developer</code></pre>
+      </li>
+      <li>Click <kbd>Next</kbd></li>
+      <li>Click <kbd>Create</kbd></li>
+      <li>Go to <kbd>My project</kbd></li>
+      <li>You should see <kbd>datagrid</kbd> deployment with <kbd>3 pods</kbd> and <kbd>3 services</kbd> : datagrid-hotrod, datagrid-http and datagrid-management</li>
+      <img src="img/datagrid-pods.png" alt="pods" class="img-rounded"/>
+    </ul>
+    <div class="alert alert-warning">You can deploy de cluster easily from command line :</div>
+    <pre><code>cd streaming-data-workshop
+./start-datagrid.sh</code></pre>
+  </section>
+
 
   <h2>Deploy Datagrid visualizer</h2>
 
