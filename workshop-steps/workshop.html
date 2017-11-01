@@ -257,12 +257,54 @@ private void inject(RoutingContext ctx) {
 
   <h2>Ex5 :: Transport data</h2>
 
-  <p>Delayed Trains Listener</p>
-
   <section id="transport">
     <img src="img/transportLayer.png" alt="Transport Layer" class="img-rounded">
     <ul style="list-style: decimal;">
-      <li>Open <kbd>DelayedListener</kbd></li>
+      <li>Open <kbd>DelayedListener</kbd> class in the <kbd>delayed-listener</kbd> module</li>
+      <li>Implement <code>inject</code> method with <strong>continuous query</strong>
+        <pre><code class="java">private void addContinuousQuery(RemoteCache< String, Stop> stations) {
+    // TODO 1 - Create QueryFactory with Search class for the stations cache
+
+    // TODO 2 - Create query for Stop where 'delayMin' is bigger than 0 using the QueryFactory
+
+    // TODO 3 - Create continuous query listener and override result joining
+
+    // TODO 4 - Publish each new Stop to the "delayed-trains" address via Vertx eventbus
+    // Store asynchronously Stop's train name into DELAYED_TRAINS_CACHE_NAME cache
+
+    // TODO 5 - Get continuous query, remove any previous listeners, and join query with listener
+  }</code></pre>
+
+        <a class="btn btn-info" role="button" onclick="$('#array-sol-4').toggle();">Show/Hide Solution</a>
+        <div id="array-sol-4" style="display:none;">
+        <pre>
+          <code class="java">private void addContinuousQuery(RemoteCache< String, Stop> stations) {
+    QueryFactory qf = Search.getQueryFactory(stations);
+
+    Query query = qf.from(Stop.class)
+      .having("delayMin").gt(0L)
+      .build();
+
+    ContinuousQueryListener< String, Stop> listener =
+      new ContinuousQueryListener< String, Stop>() {
+        @Override
+        public void resultJoining(String id, Stop stop) {
+          vertx.runOnContext(x -> {
+            vertx.eventBus().publish("delayed-trains", toJson(stop));
+            RemoteCache<String, String> delayed = client.getCache(DELAYED_TRAINS_CACHE_NAME);
+            delayed.putAsync(stop.train.getName(), stop.train.getName());
+          });
+        }
+      };
+
+    ContinuousQuery< String, Stop> continuousQuery = Search.getContinuousQuery(stations);
+    continuousQuery.removeAllListeners();
+    continuousQuery.addContinuousQueryListener(query, listener);
+  }</code></pre>
+        </div>
+      </li>
+      <li><code>./redeploy.sh</code></li>
+      <li>HOW TO CHECK ???</li>
     </ul>
   </section>
 
@@ -272,7 +314,46 @@ private void inject(RoutingContext ctx) {
   <section id="inmemory">
     <img src="img/InMemoryLayer.png" alt="Inmemory Layer" class="img-rounded">
     <ul style="list-style: decimal;">
-      <li>Open <kbd>DelayedTrains</kbd></li>
+      <li>Open <kbd>DelayedTrains</kbd> class in the <kbd>delayed-trains</kbd> module</li>
+      <li>Implement <code>getTrainId</code> method
+        <pre><code class="java"> private String getTrainId(Map.Entry< String, String> entry, RemoteCache< String, TrainPosition> positionsCache) {
+    if (!entry.getValue().isEmpty())
+      return entry.getValue();
+
+    // TODO 1 - Create Infinispan Ickle to get train ids for all train positions with a given train name
+
+    // TODO 2 - If multiple train positions returned, just pick one and cache it in trainIds collection
+
+    return null;
+  }</code></pre>
+
+        <a class="btn btn-info" role="button" onclick="$('#array-sol-5').toggle();">Show/Hide Solution</a>
+        <div id="array-sol-5" style="display:none;">
+        <pre>
+          <code class="java">private String getTrainId(Map.Entry< String, String> entry, RemoteCache< String, TrainPosition> positionsCache) {
+    if (!entry.getValue().isEmpty())
+      return entry.getValue();
+
+    String trainName = entry.getKey();
+    QueryFactory qf = Search.getQueryFactory(positionsCache);
+    Query q = qf.create("select tp.trainId from workshop.model.TrainPosition tp where name = :trainName");
+    q.setParameter("trainName", trainName);
+    List< Object[]> trains = q.list();
+
+    Iterator< Object[]> it = trains.iterator();
+    if (it.hasNext()) {
+      // Not accurate but simplest of methods
+      String trainId = (String) it.next()[0];
+      trainIds.put(trainName, trainId);
+      return trainId;
+    }
+
+    return null;
+  }</code></pre>
+        </div>
+      </li>
+      <li><code>./redeploy.sh</code></li>
+      <li>HOW TO CHECK ???</li>
     </ul>
   </section>
 
